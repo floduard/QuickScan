@@ -8,6 +8,9 @@ import nmap
 import hashlib
 import platform
 import subprocess
+import time
+from scapy.all import IP, TCP, send
+import random
 
 def is_host_reachable(host):
     param = "-n" if platform.system().lower() == "windows" else "-c"
@@ -27,13 +30,15 @@ def show_menu():
     print("4: Network Sniffing")
     print("5: Brute Force Detection")
     print("6: System Integrity Check")
+    print("8: Simulate Brute Force Attack")
+    print("9: Simulate Port Flood Attack")
     print("12: Complete Scan (All Scans)")
     print("0: Exit")
 
 # Prompt user for scan selection
 def get_user_choice():
     show_menu()
-    choice = input("Enter your choice (e.g., 1, 2, 12): ").strip()
+    choice = input("Enter your choice (e.g., 1, 2,..., 12): ").strip()
     return choice
     
 
@@ -149,7 +154,6 @@ def run_network_sniffing(interface="eth0"):
         return {"Error": str(e)}
 
 
-
 def run_brute_force_detection():
     print("[+] Scanning logs for brute-force attempts...")
     log_file = "/var/log/auth.log"  # Might vary: /var/log/secure on some systems
@@ -183,6 +187,7 @@ def get_file_hash(path):
             return hashlib.sha256(f.read()).hexdigest()
     except:
         return None
+
 
 def run_system_integrity_check():
     print("[+] Running system integrity check...")
@@ -235,7 +240,69 @@ def print_pretty_report(report, indent=0):
     else:
         print(f"{spacer}- {report}")
 
-        
+def simulate_brute_force(target):
+    print(f"[+] Simulating brute-force attack on {target} (port 22)...")
+
+    # Common usernames and passwords
+    common_usernames = [
+        "admin", "administrator", "root", "user", "guest", "test", "info", "adm", "mysql",
+        "oracle", "postgres", "ftp", "pi", "ubuntu", "ec2-user", "webadmin", "service",
+        "backup", "support", "sysadmin", "developer", "operator", "nobody", "apache", "nginx", "tomcat"
+    ]
+    
+    common_passwords = [
+        "123456", "password", "admin", "1234", "12345", "12345678", "qwerty", "abc123", "111111",
+        "123123", "root", "toor", "letmein", "welcome", "password1", "123456789", "qwerty123",
+        "1q2w3e4r", "test", "default", "changeme", "admin123", "passw0rd", "123qwe", "monkey",
+        "dragon", "baseball", "iloveyou", "trustno1", "sunshine", "shadow", "login", "princess"
+    ]
+
+    # Randomly select a "successful" username/password
+    success_username = random.choice(common_usernames)
+    success_password = random.choice(common_passwords)
+
+    attempts = []
+    found = False
+
+    for username in common_usernames:
+        for password in common_passwords:
+            attempt = f"Trying {username}/{password}..."
+            print(f"    {attempt}")
+            attempts.append(attempt)
+            time.sleep(0.05)  # Simulated delay
+
+            if username == success_username and password == success_password:
+                print(f"[✔] SUCCESS: {username}/{password}")
+                found = True
+                break
+        if found:
+            break
+
+    result = {
+        "Simulated": True,
+        "Attempts Made": len(attempts),
+        "Successful Credentials": f"{success_username}/{success_password}",
+        "Attempts (sample)": attempts[-10:]  # show last 10 attempts
+    }
+    return result
+
+def simulate_port_flood(target):
+    print(f"[+] Simulating port flood on {target} (20 random TCP SYN packets)...")
+    ports = random.sample(range(1, 1000), 20)
+    sent_ports = []
+
+    for port in ports:
+        pkt = IP(dst=target)/TCP(dport=port, flags='S')
+        send(pkt, verbose=0)
+        print(f"    Sent SYN to port {port}")
+        sent_ports.append(port)
+
+    result = {
+        "Simulated": True,
+        "Details": "Sent 20 TCP SYN packets to random ports.",
+        "Ports Targeted": sent_ports
+    }
+    return result
 
 def interactive_menu():
     while True:
@@ -243,18 +310,18 @@ def interactive_menu():
         # Prompt the user for choice
         choice = get_user_choice() 
         report_data = {}
-        target = input("Enter target Domain/ IP address: ")
+        
         
         if choice == "0":
             print("Exiting QuickSystemScan.")
             break
-         
+        target = input("Enter target Domain/ IP address: ")
         if not is_host_reachable(target):
              print(f"[!] Host {target} is not reachable via ping.")
              proceed = input("Do you want to continue anyway? (y/n): ")
              if proceed.lower() != 'y':
                  print("Aborting scan.")
-                 return
+                 break
         else:
               print(f"[+] Host {target} is reachable. Proceeding...")
                   
@@ -276,6 +343,12 @@ def interactive_menu():
 
         elif choice == "6":
             report_data["System Integrity Check"] = run_system_integrity_check()
+            
+        elif choice == "8":
+            report_data["Brute Force Simulation"] = simulate_brute_force(target)
+            
+        elif choice == "9":
+            report_data["Port Flood Simulation"] = simulate_port_flood(target)
 
         elif choice == "12":
             interface = input("Enter the network interface to sniff (e.g., eth0, wlan0): ").strip()
