@@ -18,20 +18,20 @@ Python-based CLI tool designed for security analysts and sysadmins to perform va
 #### 📋 Prerequisites
 Ensure the following packages and tools are installed:
 
-** sudo apt update 
-** sudo apt install nmap python3-pip 
-** pip3 install psutil scapy  
-** If python-nmap fails with externally-managed-environment, use:
+** sudo apt update **
+** sudo apt install nmap python3-pip**
+** pip3 install psutil scapy  **
+** If python-nmap fails with externally-managed-environment, use: **
 
 
- ** pip3 install --break-system-packages python-nmap
+ ** pip3 install --break-system-packages python-nmap **
 
 ### 🔧 Optional Tools
-** Wireshark/tshark (if extending sniffing)
+** Wireshark/tshark (if extending sniffing) **
 
-** Root/Sudo privileges (recommended for some scans)
+** Root/Sudo privileges (recommended for some scans) **
 
-* 📂 Installation
+* 📂 Installation *
 
 ### git clone https://github.com/yourusername/QuickSystemScan.git
 ### cd QuickSystemScan
