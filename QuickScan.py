@@ -30,8 +30,8 @@ def show_menu():
     print("4: Network Sniffing")
     print("5: Brute Force Detection")
     print("6: System Integrity Check")
-    print("8: Simulate Brute Force Attack")
-    print("9: Simulate Port Flood Attack")
+    print("7: Simulate Brute Force Attack")
+    print("8: Simulate Port Flood Attack")
     print("12: Complete Scan (All Scans)")
     print("0: Exit")
 
@@ -344,10 +344,10 @@ def interactive_menu():
         elif choice == "6":
             report_data["System Integrity Check"] = run_system_integrity_check()
             
-        elif choice == "8":
+        elif choice == "7":
             report_data["Brute Force Simulation"] = simulate_brute_force(target)
             
-        elif choice == "9":
+        elif choice == "8":
             report_data["Port Flood Simulation"] = simulate_port_flood(target)
 
         elif choice == "12":
@@ -359,6 +359,8 @@ def interactive_menu():
             report_data["Network Sniffing"] = run_network_sniffing(interface)
             report_data["Brute Force Detection"] = run_brute_force_detection()
             report_data["System Integrity Check"] = run_system_integrity_check()
+            report_data["Brute Force Simulation"] = simulate_brute_force(target)
+            report_data["Port Flood Simulation"] = simulate_port_flood(target)
 
         else:
             print("Invalid choice. Please try again.")
